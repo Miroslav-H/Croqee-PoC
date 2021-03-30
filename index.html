@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <title>Test</title>
+  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+</head>
+<body>
+  <h1>Croqee prototype</h1>
+  <div class="wrap">
+    <div id="THREEjs">
+      <canvas id="c"></canvas>
+    </div>
+    <div class="rendered-img"></div>
+  </div>
+  <div class="btn-wrap">
+    <button id="screenshot" type="button">Snap current pose</button>
+  </div>
+  <script src="./main.js" type="module"></script>
+</body>
+</html>

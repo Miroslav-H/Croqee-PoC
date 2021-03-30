@@ -4,6 +4,7 @@ import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/j
 import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.118.1/examples/jsm/loaders/GLTFLoader.js';
         const canvas = document.getElementById("c");
         const CanvasThreeJS = document.getElementById("THREEjs");
+        const renderedImg = document.getElementsByClassName("rendered-img")[0];
 
 class ProjectTest {
     constructor(){
@@ -15,6 +16,7 @@ class ProjectTest {
         
 
         this.renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: false, alpha:true, preserveDrawingBuffer: true });
+        this.renderer.setSize(3000, 3000);
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         // this.renderer.setPixelRatio(window.devicePixelRatio);
@@ -114,6 +116,10 @@ class ProjectTest {
         elem.addEventListener('click', () => {
             var dataUrl = this.renderer.domElement.toDataURL("image/png");
             console.log(dataUrl);
+            const image = new Image();
+            image.src = dataUrl;
+            renderedImg.innerHTML = "";
+            renderedImg.appendChild(image);
         });
 
         
