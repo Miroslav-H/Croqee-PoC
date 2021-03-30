@@ -2,7 +2,8 @@ import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118/build/three.mod
 
 import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/controls/OrbitControls.js';
 import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.118.1/examples/jsm/loaders/GLTFLoader.js';
-
+        const canvas = document.getElementById("c");
+        const CanvasThreeJS = document.getElementById("THREEjs");
 
 class ProjectTest {
     constructor(){
@@ -11,23 +12,24 @@ class ProjectTest {
 
 
     _Initialize() {
-        const CanvasThreeJS = document.getElementById("THREEjs");
+        
 
-        this._threejs = new THREE.WebGLRenderer({ antialias: false,alpha:true });
-        this._threejs.shadowMap.enabled = true;
-        this._threejs.shadowMap.type = THREE.PCFSoftShadowMap;
-        // this._threejs.setPixelRatio(window.devicePixelRatio);
-        this._threejs.setClearColor(0x000000, 0);
-        this._threejs.setSize(CanvasThreeJS.clientWidth, CanvasThreeJS.clientHeight); 
+        this.renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: false, alpha:true, preserveDrawingBuffer: true });
+        this.renderer.shadowMap.enabled = true;
+        this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        // this.renderer.setPixelRatio(window.devicePixelRatio);
+        this.renderer.setClearColor(0x000000, 0);
+        this.renderer.setSize(CanvasThreeJS.clientWidth, CanvasThreeJS.clientHeight); 
 
-        CanvasThreeJS.appendChild(this._threejs.domElement);
+        CanvasThreeJS.appendChild(this.renderer.domElement);
 
-        CanvasThreeJS.addEventListener('resize', () => {
+        window.addEventListener('resize', () => {
+            console.log("nnn")
             this._OnWindowResize();
         }, false);
 
         const fov = 54.4;
-        const aspect = 1920 / 1080;
+        const aspect = 1;
         const near = 1.0;
         const far = 1000.0;
         this._camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
@@ -53,12 +55,12 @@ class ProjectTest {
         light = new THREE.AmbientLight(0x404040);
         this._scene.add(light);
 
-        const controls = new OrbitControls(this._camera, this._threejs.domElement);
+        const controls = new OrbitControls(this._camera, this.renderer.domElement);
         controls.target.set(0, 15, 0);
         controls.enableDamping = true;   //damping 
         controls.dampingFactor = 0.2;   //damping inertia
         controls.enableZoom = true;      //Zooming
-        controls.minDistance = 10;
+        controls.minDistance = 40;
         controls.maxDistance = 50;
         controls.autoRotate = true;       // enable rotation
         controls.maxPolarAngle = Math.PI / 2; // Limit angle of visibility
@@ -95,31 +97,55 @@ class ProjectTest {
         //   box.receiveShadow = true;
         //   this._scene.add(box);
       
+
+        // function resizeRendererToDisplaySize(renderer) {
+        //     const canvas = renderer.domElement;
+        //     const width = CanvasThreeJS.clientWidth;
+        //     const height = CanvasThreeJS.clientHeight;
+        //     const needResize = canvas.width !== width || canvas.height !== height;
+        //     if (needResize) {
+        //       renderer.setSize(width, height, false);
+        //     }
+        //     return needResize;
+        //   }
+
+
+        const elem = document.querySelector('#screenshot');
+        elem.addEventListener('click', () => {
+            var dataUrl = this.renderer.domElement.toDataURL("image/png");
+            console.log(dataUrl);
+        });
+
+        
+
         this._LoadModel();
         this._RAF();
     };
+
+    
 
     _LoadModel() {
         const loader = new GLTFLoader();
         loader.load('./resources/female.gltf', (gltf) => {
             
           gltf.scene.traverse(c => {
-            c.scale.set(2.8, 2.3, 2.8)
+            c.scale.set(2.3, 2.3, 2.3)
             c.castShadow = true;
           });
           this._scene.add(gltf.scene);
         });
       }
 
+      
+
     _OnWindowResize(){
-        this._camera.aspect = CanvasThreeJS.clientWidth / CanvasThreeJS.clientHeight;
         this._camera.updateProjectionMatrix();
-        this._threejs.setSize(CanvasThreeJS.clientWidth, CanvasThreeJS.clientHeight);
+        this.renderer.setSize(CanvasThreeJS.clientWidth, CanvasThreeJS.clientHeight);
     }
 
     _RAF(){
         requestAnimationFrame(() => {
-            this._threejs.render(this._scene, this._camera);
+            this.renderer.render(this._scene, this._camera);
             this._RAF();
         });
     }
