@@ -2,9 +2,28 @@ import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.118/build/three.mod
 
 import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/controls/OrbitControls.js';
 import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.118.1/examples/jsm/loaders/GLTFLoader.js';
-        const canvas = document.getElementById("c");
-        const CanvasThreeJS = document.getElementById("THREEjs");
-        const renderedImg = document.getElementsByClassName("rendered-img")[0];
+
+const canvas = document.getElementById("c");
+const CanvasThreeJS = document.getElementById("THREEjs");
+const renderedImg = document.getElementsByClassName("rendered-img")[0];
+
+const models = ["female1.gltf", "female13.gltf"];
+
+// let model = Math.floor(Math.random() * (models.length - 0) + 0);
+
+let model = 0;
+
+let currentModel;
+
+console.log(model)
+
+let light = new THREE.DirectionalLight();
+
+const nextBtn = document.querySelector('#next');
+
+let buttonDelay = false;
+
+
 
 class ProjectTest {
     constructor(){
@@ -25,6 +44,8 @@ class ProjectTest {
 
         CanvasThreeJS.appendChild(this.renderer.domElement);
 
+        
+
         window.addEventListener('resize', () => {
             console.log("nnn")
             this._OnWindowResize();
@@ -35,27 +56,40 @@ class ProjectTest {
         const near = 1.0;
         const far = 1000.0;
         this._camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-        this._camera.position.set(75, 20, 0);
+        this._camera.position.set(0, 20, 75);
 
         this._scene = new THREE.Scene();
+        
+        //Shows 3D axes, comment out in production
+        // const axesHelper = new THREE.AxesHelper(20)
+        // this._scene.add(axesHelper)
+        
+        light.intensity = 0.85;
 
-        let light = new THREE.DirectionalLight(0xFFFFFF);
-        light.position.set(100, 100, -100);
-        light.target.position.set(0, 0, 0);
-        light.castShadow = true;
-        light.shadow.bias = 0.01;
-        light.shadow.mapSize.width = 2048;
-        light.shadow.mapSize.height = 2048;
-        light.shadow.camera.near = 1.0;
-        light.shadow.camera.far = 500;
-        light.shadow.camera.left = 200;
-        light.shadow.camera.right = -200;
-        light.shadow.camera.top = 200;
-        light.shadow.camera.bottom = -200;
         this._scene.add(light);
+        // light.position.set(10, 10, 10);
+        
 
-        light = new THREE.AmbientLight(0x404040);
-        this._scene.add(light);
+        // const helper = new THREE.DirectionalLightHelper(light);
+        // this._scene.add(helper);
+
+        // let light = new THREE.DirectionalLight(0xFFFFFF);
+        // light.position.set(100, 100, 100);
+        // light.target.position.set(0, 0, 0);
+        // light.castShadow = true;
+        // light.shadow.bias = 0.01;
+        // light.shadow.mapSize.width = 2048;
+        // light.shadow.mapSize.height = 2048;
+        // light.shadow.camera.near = 1.0;
+        // light.shadow.camera.far = 500;
+        // light.shadow.camera.left = 200;
+        // light.shadow.camera.right = -200;
+        // light.shadow.camera.top = 200;
+        // light.shadow.camera.bottom = -200;
+        // this._scene.add(light);
+
+        // light = new THREE.AmbientLight(0x404040);
+        // this._scene.add(light);
 
         const controls = new OrbitControls(this._camera, this.renderer.domElement);
         controls.target.set(0, 15, 0);
@@ -64,8 +98,10 @@ class ProjectTest {
         controls.enableZoom = true;      //Zooming
         controls.minDistance = 40;
         controls.maxDistance = 50;
+        controls.screenSpacePanning = false;
         controls.autoRotate = true;       // enable rotation
         controls.maxPolarAngle = Math.PI / 2; // Limit angle of visibility
+        controls.saveState();
         controls.update();
 
         // const loader = new THREE.CubeTextureLoader();
@@ -122,6 +158,26 @@ class ProjectTest {
             renderedImg.appendChild(image);
         });
 
+
+        
+            nextBtn.addEventListener('click', () => {
+                if(buttonDelay === false){
+                    this._scene.remove(currentModel)
+                    if(model < models.length - 1){
+                        model++
+                    }else{
+                        model = 0;
+                    }
+                    console.log(model)
+                    controls.reset();
+                    this._LoadModel();
+                    buttonDelay = true;
+                    setTimeout(function() {
+                        console.log("potato")
+                        buttonDelay = false;
+                    }, 500);
+                }
+            });
         
 
         this._LoadModel();
@@ -132,12 +188,13 @@ class ProjectTest {
 
     _LoadModel() {
         const loader = new GLTFLoader();
-        loader.load('./resources/female.gltf', (gltf) => {
+        loader.load(`./resources/${models[model]}`, (gltf) => {
             
           gltf.scene.traverse(c => {
-            c.scale.set(2.3, 2.3, 2.3)
+            c.scale.set(5, 5, 5)
             c.castShadow = true;
           });
+          currentModel = gltf.scene;
           this._scene.add(gltf.scene);
         });
       }
@@ -149,8 +206,11 @@ class ProjectTest {
         this.renderer.setSize(CanvasThreeJS.clientWidth, CanvasThreeJS.clientHeight);
     }
 
+
+
     _RAF(){
         requestAnimationFrame(() => {
+            light.position.copy(this._camera.position);
             this.renderer.render(this._scene, this._camera);
             this._RAF();
         });
