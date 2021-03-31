@@ -7,7 +7,7 @@ const canvas = document.getElementById("c");
 const CanvasThreeJS = document.getElementById("THREEjs");
 const renderedImg = document.getElementsByClassName("rendered-img")[0];
 
-const models = ["female1.gltf", "female13.gltf"];
+const models = ["female1.gltf", "female2.gltf","female13.gltf", "female14.gltf", "female15.gltf", "female16.gltf", "female19.gltf"];
 
 // let model = Math.floor(Math.random() * (models.length - 0) + 0);
 
@@ -20,6 +20,7 @@ console.log(model)
 let light = new THREE.DirectionalLight();
 
 const nextBtn = document.querySelector('#next');
+const previousBtn = document.querySelector('#previous');
 
 let buttonDelay = false;
 
@@ -173,7 +174,24 @@ class ProjectTest {
                     this._LoadModel();
                     buttonDelay = true;
                     setTimeout(function() {
-                        console.log("potato")
+                        buttonDelay = false;
+                    }, 500);
+                }
+            });
+
+            previousBtn.addEventListener('click', () => {
+                if(buttonDelay === false){
+                    this._scene.remove(currentModel)
+                    if(model > 0){
+                        model--
+                    }else{
+                        model = models.length - 1;
+                    }
+                    console.log(model)
+                    controls.reset();
+                    this._LoadModel();
+                    buttonDelay = true;
+                    setTimeout(function() {
                         buttonDelay = false;
                     }, 500);
                 }
