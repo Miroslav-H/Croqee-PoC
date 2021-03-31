@@ -15,7 +15,7 @@ class ProjectTest {
     _Initialize() {
         
 
-        this.renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: false, alpha:true, preserveDrawingBuffer: true });
+        this.renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha:true, preserveDrawingBuffer: true });
         this.renderer.setSize(3000, 3000);
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
