@@ -6,7 +6,7 @@ body{
 }
 
 #THREEjs{
-    background: url(./resources/grid.svg);
+    background: url(../resources/grid.svg);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -22,7 +22,7 @@ body{
     width: 45vw;
     height: 45vw;
     background-color: rgb(247, 243, 237);
-    background: url(./resources/grid-light.svg);
+    background: url(../resources/grid-light.svg);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
