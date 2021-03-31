@@ -27,7 +27,7 @@ let buttonDelay = false;
 const msg = document.getElementById("msg");
 const overlay = document.getElementById("overlay");
 
-canvas.onmousedown = function(){
+canvas.onpointerdown = function(){
     msg.style.display = "none";
     overlay.style.backgroundColor = "rgba(0, 0, 0, 0)";
     overlay.style.visibility = "hidden";
