@@ -39,7 +39,7 @@ class ProjectTest {
         this.renderer.setSize(3000, 3000);
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-        // this.renderer.setPixelRatio(window.devicePixelRatio);
+        this.renderer.setPixelRatio(window.devicePixelRatio * 1.5);
         this.renderer.setClearColor(0x000000, 0);
         this.renderer.setSize(CanvasThreeJS.clientWidth, CanvasThreeJS.clientHeight); 
 
