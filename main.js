@@ -36,6 +36,16 @@ let light = new THREE.DirectionalLight();
 const nextBtn = document.querySelector('#next');
 const previousBtn = document.querySelector('#previous');
 
+const outlineBtn = document.querySelector('#outline');
+
+outlineBtn.addEventListener("click", function(){
+    if(params.enable == true){
+        params.enable = false
+    }else{
+        params.enable = true
+    }
+})
+
 let buttonDelay = false;
 
 const msg = document.getElementById("msg");
@@ -162,7 +172,7 @@ class ProjectTest {
                 // outline color
                 uniforms.outlineColor.value.set(outlineColor[1]);
                 // depth bias
-                uniforms.multiplierParameters.value.x = .5;
+                uniforms.multiplierParameters.value.x = 1;
                 // depth multiplier
                 uniforms.multiplierParameters.value.y = 1;
                 // normal bias
