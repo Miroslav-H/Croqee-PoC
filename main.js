@@ -164,9 +164,9 @@ class ProjectTest {
                 // depth bias
                 uniforms.multiplierParameters.value.x = .5;
                 // depth multiplier
-                uniforms.multiplierParameters.value.y = 4;
+                uniforms.multiplierParameters.value.y = 1;
                 // normal bias
-                uniforms.multiplierParameters.value.z = 2;
+                uniforms.multiplierParameters.value.z = 1;
                 // normal multiplier
                 uniforms.multiplierParameters.value.w = .3;
         }
