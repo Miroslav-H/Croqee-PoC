@@ -359,7 +359,7 @@ class ProjectTest {
             light.position.copy(this.camera.position);
             if(params.enable === true){
                 // console.log(composer)
-                if(params.model === true){
+                if(params.model === false){
                     composer2.render();
                 }else{
                     composer.render();
