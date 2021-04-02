@@ -39,11 +39,7 @@ const previousBtn = document.querySelector('#previous');
 const outlineBtn = document.querySelector('#outline');
 
 outlineBtn.addEventListener("click", function(){
-    if(params.enable == true){
-        params.enable = false
-    }else{
-        params.enable = true
-    }
+    params.enable = !params.enable
 })
 
 let buttonDelay = false;
@@ -283,9 +279,10 @@ class ProjectTest {
     RAF(){
         requestAnimationFrame(() => {
             light.position.copy(this.camera.position);
-            this.renderer.render(this.scene, this.camera);
             if ( params.enable === true ) {
                 composer.render();
+            }else{
+                this.renderer.render(this.scene, this.camera);
             }
             this.RAF();
         });
