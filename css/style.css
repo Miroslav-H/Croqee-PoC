@@ -83,6 +83,7 @@ h1{
 
 canvas{
     outline: 0;
+    /* filter: invert(1); */
 }
 
 .ui-navigation{

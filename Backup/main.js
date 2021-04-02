@@ -47,7 +47,7 @@ canvas.onpointerdown = function(){
     overlay.style.visibility = "hidden";
 }
 
-let composer, effectSobel, pass, customOutline, uniforms, effectFXAA;
+let composer, effectSobel;
 
 class ProjectTest {
     constructor(){
@@ -80,8 +80,8 @@ class ProjectTest {
         this.scene = new THREE.Scene();
         
         // Shows 3D axes, comment out in production
-        // const axesHelper = new THREE.AxesHelper(20)
-        // this.scene.add(axesHelper)
+        const axesHelper = new THREE.AxesHelper(20)
+        this.scene.add(axesHelper)
         
         light.intensity = 0.85;
 
@@ -121,61 +121,7 @@ class ProjectTest {
             composer.addPass( effectSobel );
         }
 
-        function postProcessingOutline(renderer, scene, camera){
-            // Set up post processing
-            // Create a render target that holds a depthTexture so we can use it in the outline pass
-            // See: https://threejs.org/docs/index.html#api/en/renderers/WebGLRenderTarget.depthBuffer
-            const depthTexture = new THREE.DepthTexture();
-            const renderTarget = new THREE.WebGLRenderTarget(
-            window.innerWidth,
-            window.innerHeight,
-            {
-                depthTexture: depthTexture,
-                depthBuffer: true
-            }
-            );
-
-            // Initial render pass.
-            composer = new EffectComposer(renderer, renderTarget);
-            pass = new RenderPass(scene, camera);
-            composer.addPass(pass);
-
-            // Outline pass.
-            customOutline = new CustomOutlinePass(
-            new THREE.Vector2(window.innerWidth, window.innerHeight),
-            scene,
-            camera
-            
-            );
-            composer.addPass(customOutline);
-
-            // Antialias pass.
-            effectFXAA = new ShaderPass(FXAAShader);
-            effectFXAA.uniforms["resolution"].value.set(
-            1 / window.innerWidth,
-            1 / window.innerHeight
-            );
-            composer.addPass(effectFXAA);
-
-            let outlineColor = [0xff3c00, 0x000]
-
-            uniforms = customOutline.fsQuad.material.uniforms;
-                // outline color
-                uniforms.outlineColor.value.set(outlineColor[1]);
-                // depth bias
-                uniforms.multiplierParameters.value.x = .5;
-                // depth multiplier
-                uniforms.multiplierParameters.value.y = 10;
-                // normal bias
-                uniforms.multiplierParameters.value.z = 2;
-                // normal multiplier
-                uniforms.multiplierParameters.value.w = .3;
-        }
-
-
-        postProcessingOutline(this.renderer, this.scene, this.camera);
-        
-        // postProcessingSobel(this.renderer, this.scene, this.camera);
+         postProcessingSobel(this.renderer, this.scene, this.camera);
 
             window.addEventListener('resize', () => {
                 console.log("nnn")
@@ -262,11 +208,8 @@ class ProjectTest {
 
         composer.setSize( window.innerWidth, window.innerHeight );
 
-        // effectSobel.uniforms[ 'resolution' ].value.x = window.innerWidth * window.devicePixelRatio;
-        // effectSobel.uniforms[ 'resolution' ].value.y = window.innerHeight * window.devicePixelRatio;
-
-        effectFXAA.setSize(window.innerWidth, window.innerHeight);
-        customOutline.setSize(window.innerWidth, window.innerHeight);
+        effectSobel.uniforms[ 'resolution' ].value.x = window.innerWidth * window.devicePixelRatio;
+        effectSobel.uniforms[ 'resolution' ].value.y = window.innerHeight * window.devicePixelRatio;
     }
 
 
@@ -276,7 +219,13 @@ class ProjectTest {
             light.position.copy(this.camera.position);
             this.renderer.render(this.scene, this.camera);
             if ( params.enable === true ) {
+
                 composer.render();
+
+            } else {
+
+                renderer.render( scene, camera );
+
             }
             this.RAF();
         });
@@ -284,7 +233,7 @@ class ProjectTest {
 
 }
 
-console.log(uniforms)
+
 
 
 let _APP = null;
