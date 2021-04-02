@@ -23,11 +23,12 @@ const models = ["female1.gltf", "female2.gltf","female13.gltf", "female14.gltf",
 const params = {
     enable: true,
     model: true,
-    outlineColor: 0x000,
+    outlineColor: 0x0040ff,
     depthBias: 1,
     depthMultiplier: 10,
     normalBias: 3,
-    normalMultiplier: .6
+    normalMultiplier: .6,
+    outlineSharpness: 0.01
 };
 // let model = Math.floor(Math.random() * (models.length - 0) + 0);
 
@@ -167,13 +168,16 @@ class ProjectTest {
             );
             composer.addPass(customOutline);
 
+            const pixelRatio = renderer.getPixelRatio();
+
             // Antialias pass.
             effectFXAA = new ShaderPass(FXAAShader);
             effectFXAA.uniforms["resolution"].value.set(
-            1 / window.innerWidth,
-            1 / window.innerHeight
+                params.outlineSharpness / (CanvasThreeJS.offsetWidth * pixelRatio),
+                params.outlineSharpness / (CanvasThreeJS.offsetHeight * pixelRatio)
             );
             composer.addPass(effectFXAA);
+            
 
             let outlineColor = [0xff3c00, 0x000]
 
@@ -218,11 +222,12 @@ class ProjectTest {
             );
             composer2.addPass(customOutline);
 
+            const pixelRatio = renderer.getPixelRatio();
             // Antialias pass.
             effectFXAA = new ShaderPass(FXAAShader);
             effectFXAA.uniforms["resolution"].value.set(
-            1 / window.innerWidth,
-            1 / window.innerHeight
+                params.outlineSharpness / (CanvasThreeJS.offsetWidth * pixelRatio),
+                params.outlineSharpness / (CanvasThreeJS.offsetHeight * pixelRatio)
             );
             composer2.addPass(effectFXAA);
 
