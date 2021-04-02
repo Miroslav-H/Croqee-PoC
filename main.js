@@ -21,7 +21,13 @@ const renderedImg = document.getElementsByClassName("rendered-img")[0];
 const models = ["female1.gltf", "female2.gltf","female13.gltf", "female14.gltf", "female15.gltf", "female16.gltf", "female19.gltf"];
 
 const params = {
-    enable: true
+    enable: true,
+    model: true,
+    outlineColor: 0x000,
+    depthBias: 1,
+    depthMultiplier: 10,
+    normalBias: 3,
+    normalMultiplier: .6
 };
 // let model = Math.floor(Math.random() * (models.length - 0) + 0);
 
@@ -37,10 +43,12 @@ const nextBtn = document.querySelector('#next');
 const previousBtn = document.querySelector('#previous');
 
 const outlineBtn = document.querySelector('#outline');
+const toggleModelBtn = document.querySelector('#toggleModel');
 
 outlineBtn.addEventListener("click", function(){
     params.enable = !params.enable
 })
+
 
 let buttonDelay = false;
 
@@ -53,7 +61,7 @@ canvas.onpointerdown = function(){
     overlay.style.visibility = "hidden";
 }
 
-let composer, effectSobel, pass, customOutline, uniforms, effectFXAA;
+let composer, composer2, effectSobel, pass, customOutline, uniforms, effectFXAA;
 
 class ProjectTest {
     constructor(){
@@ -143,8 +151,13 @@ class ProjectTest {
             // Initial render pass.
             composer = new EffectComposer(renderer, renderTarget);
             pass = new RenderPass(scene, camera);
-            composer.addPass(pass);
-
+            console.log(pass)
+            
+            console.log(composer)
+            if(params.model === true){
+                composer.addPass(pass);
+            }
+            
             // Outline pass.
             customOutline = new CustomOutlinePass(
             new THREE.Vector2(window.innerWidth, window.innerHeight),
@@ -166,20 +179,85 @@ class ProjectTest {
 
             uniforms = customOutline.fsQuad.material.uniforms;
                 // outline color
-                uniforms.outlineColor.value.set(outlineColor[1]);
+                uniforms.outlineColor.value.set(params.outlineColor);
                 // depth bias
-                uniforms.multiplierParameters.value.x = 1;
+                uniforms.multiplierParameters.value.x = params.depthBias;
                 // depth multiplier
-                uniforms.multiplierParameters.value.y = 1;
+                uniforms.multiplierParameters.value.y = params.depthMultiplier;
                 // normal bias
-                uniforms.multiplierParameters.value.z = 1;
+                uniforms.multiplierParameters.value.z = params.normalBias;
                 // normal multiplier
-                uniforms.multiplierParameters.value.w = .3;
+                uniforms.multiplierParameters.value.w = params.normalMultiplier;
+
+                console.log(composer)
+        }
+
+        function postProcessingOutlineOnly(renderer, scene, camera){
+            // Set up post processing
+            // Create a render target that holds a depthTexture so we can use it in the outline pass
+            const depthTexture = new THREE.DepthTexture();
+            const renderTarget = new THREE.WebGLRenderTarget(
+            window.innerWidth,
+            window.innerHeight,
+            {
+                depthTexture: depthTexture,
+                depthBuffer: true
+            }
+            );
+
+            // Initial render pass.
+            composer2 = new EffectComposer(renderer, renderTarget);
+            pass = new RenderPass(scene, camera);
+            
+            // Outline pass.
+            customOutline = new CustomOutlinePass(
+            new THREE.Vector2(window.innerWidth, window.innerHeight),
+            scene,
+            camera
+            
+            );
+            composer2.addPass(customOutline);
+
+            // Antialias pass.
+            effectFXAA = new ShaderPass(FXAAShader);
+            effectFXAA.uniforms["resolution"].value.set(
+            1 / window.innerWidth,
+            1 / window.innerHeight
+            );
+            composer2.addPass(effectFXAA);
+
+
+            uniforms = customOutline.fsQuad.material.uniforms;
+                // outline color
+                uniforms.outlineColor.value.set(params.outlineColor);
+                // depth bias
+                uniforms.multiplierParameters.value.x = params.depthBias;
+                // depth multiplier
+                uniforms.multiplierParameters.value.y = params.depthMultiplier;
+                // normal bias
+                uniforms.multiplierParameters.value.z = params.normalBias;
+                // normal multiplier
+                uniforms.multiplierParameters.value.w = params.normalMultiplier;
+
+                console.log(composer2)
         }
 
 
         postProcessingOutline(this.renderer, this.scene, this.camera);
+        postProcessingOutlineOnly(this.renderer, this.scene, this.camera);
+
         
+        function toggle(){
+            params.model = !params.model;
+            postProcessingOutline(renderer, scene, camera);
+            console.log(params.model)
+        }
+
+        toggleModelBtn.addEventListener("click", function(){
+            setTimeout(toggle(), 3000);
+        });
+
+
         // postProcessingSobel(this.renderer, this.scene, this.camera);
 
             window.addEventListener('resize', () => {
@@ -255,7 +333,7 @@ class ProjectTest {
           });
           currentModel = gltf.scene;
           this.scene.add(gltf.scene);
-          console.log(gltf.scene)
+        //   console.log(gltf.scene)
         });
       }
 
@@ -279,8 +357,13 @@ class ProjectTest {
     RAF(){
         requestAnimationFrame(() => {
             light.position.copy(this.camera.position);
-            if ( params.enable === true ) {
-                composer.render();
+            if(params.enable === true){
+                // console.log(composer)
+                if(params.model === true){
+                    composer2.render();
+                }else{
+                    composer.render();
+                }
             }else{
                 this.renderer.render(this.scene, this.camera);
             }
