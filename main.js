@@ -124,7 +124,6 @@ class ProjectTest {
         function postProcessingOutline(renderer, scene, camera){
             // Set up post processing
             // Create a render target that holds a depthTexture so we can use it in the outline pass
-            // See: https://threejs.org/docs/index.html#api/en/renderers/WebGLRenderTarget.depthBuffer
             const depthTexture = new THREE.DepthTexture();
             const renderTarget = new THREE.WebGLRenderTarget(
             window.innerWidth,

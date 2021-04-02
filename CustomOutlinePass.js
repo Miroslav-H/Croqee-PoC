@@ -1,8 +1,8 @@
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.118/build/three.module.js";
 import { Pass } from "https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/postprocessing/Pass.js";
 
-// Follows the structure of
-// 		https://github.com/mrdoob/three.js/blob/master/examples/jsm/postprocessing/OutlinePass.js
+// From https://omar-shehata.medium.com/how-to-render-outlines-in-webgl-8253c14724f9 
+
 class CustomOutlinePass extends Pass {
   constructor(resolution, scene, camera) {
     super();
