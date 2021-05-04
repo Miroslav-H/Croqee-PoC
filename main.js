@@ -254,7 +254,6 @@ class ProjectTest {
         
         function toggle(){
             params.model = !params.model;
-            postProcessingOutline(renderer, scene, camera);
             console.log(params.model)
         }
 
